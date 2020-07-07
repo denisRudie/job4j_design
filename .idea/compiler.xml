@@ -23,7 +23,7 @@
       <module name="chapter_004 - Блок 4. JVM и JMM." target="13" />
       <module name="chapter_005" target="13" />
       <module name="chapter_005 - Блок 5. TDD." target="13" />
-      <module name="job4j_design" target="14" />
+      <module name="job4j_design" target="13" />
       <module name="сhapter_002 - Блок 2. Система ввода вывода." target="13" />
     </bytecodeTargetLevel>
   </component>
