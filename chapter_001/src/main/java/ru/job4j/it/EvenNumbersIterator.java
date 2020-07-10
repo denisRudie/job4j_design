@@ -11,18 +11,26 @@ public class EvenNumbersIterator implements Iterator<Integer> {
        this.nums = numbers;
     }
 
+//    @Override
+//    public boolean hasNext() {
+//        if (nums[counter] % 2 == 0) {
+//            return true;
+//        } else {
+//            while (counter < nums.length - 1) {
+//                counter++;
+//                if (nums[counter] % 2 == 0) {
+//                    return true;
+//                }
+//            } return false;
+//        }
+//    }
+
     @Override
     public boolean hasNext() {
-        if (nums[counter] % 2 == 0) {
-            return true;
-        } else {
-            while (counter < nums.length - 1) {
-                counter++;
-                if (nums[counter] % 2 == 0) {
-                    return true;
-                }
-            } return false;
+        while (counter < (nums.length - 1) && nums[counter] % 2 != 0) {
+            counter++;
         }
+        return (nums[counter] % 2 == 0);
     }
 
     @Override
