@@ -56,16 +56,16 @@ public class LinkedArray<E> implements Iterable<E> {
 
             @Override
             public E next() {
-                if (hasNext()) {
-                    if (cursor == 0) {
-                        node = first;
-                    } else {
-                        node = node.next;
-                    }
-                    cursor++;
-                    return node.item;
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
                 }
-                throw new NoSuchElementException();
+                if (cursor != 0) {
+                    node = node.next;
+                } else {
+                    node = first;
+                }
+                cursor++;
+                return node.item;
             }
         };
     }
