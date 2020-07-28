@@ -1,5 +1,7 @@
 package ru.job4j.list;
 
+import java.util.NoSuchElementException;
+
 public class SimpleQueue<T> {
     private final SimpleStack<T> in = new SimpleStack<>();
     private final SimpleStack<T> out = new SimpleStack<>();
@@ -8,9 +10,16 @@ public class SimpleQueue<T> {
      * @return return first and remove it from collection
      */
     public T poll() {
-        T value = in.popLast();
-        out.push(value);
-        return value;
+        T value;
+
+        try {
+            while (true) {
+                out.push(in.pop());
+            }
+        } catch (NoSuchElementException e) {
+            value = out.pop();
+            return value;
+        }
     }
 
     /**

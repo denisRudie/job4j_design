@@ -1,7 +1,5 @@
 package ru.job4j.list;
 
-import java.util.LinkedList;
-
 public class SimpleStack<T> {
     private ForwardLinked<T> linked = new ForwardLinked<>();
 
@@ -10,10 +8,6 @@ public class SimpleStack<T> {
      */
     public T pop() {
         return linked.deleteLast();
-    }
-
-    public T popLast() {
-        return linked.deleteFirst();
     }
 
     /**
