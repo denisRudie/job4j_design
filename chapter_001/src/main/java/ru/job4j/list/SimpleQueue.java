@@ -10,15 +10,12 @@ public class SimpleQueue<T> {
      * @return return first and remove it from collection
      */
     public T poll() {
-        T value;
-
         try {
             while (true) {
                 out.push(in.pop());
             }
         } catch (NoSuchElementException e) {
-            value = out.pop();
-            return value;
+            return out.pop();
         }
     }
 
