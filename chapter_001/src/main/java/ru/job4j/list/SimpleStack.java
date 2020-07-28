@@ -12,6 +12,10 @@ public class SimpleStack<T> {
         return linked.deleteLast();
     }
 
+    public T popLast() {
+        return linked.deleteFirst();
+    }
+
     /**
      * @param value add value to collection
      */
