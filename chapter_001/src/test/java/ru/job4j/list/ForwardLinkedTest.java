@@ -6,6 +6,7 @@ import static org.hamcrest.CoreMatchers.is;
 import org.junit.Test;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class ForwardLinkedTest {
 
@@ -17,6 +18,21 @@ public class ForwardLinkedTest {
         Iterator<Integer> it = linked.iterator();
         assertThat(it.next(), is(1));
         assertThat(it.next(), is(2));
+    }
+
+    @Test
+    public void whenAddOneThenIter() {
+        ForwardLinked<Integer> linked = new ForwardLinked<>();
+        linked.add(1);
+        Iterator<Integer> it = linked.iterator();
+        assertThat(it.next(), is(1));
+    }
+
+    @Test (expected = NoSuchElementException.class)
+    public void whenHaveVoidListThenIter() {
+        ForwardLinked<Integer> linked = new ForwardLinked<>();
+        Iterator<Integer> it = linked.iterator();
+        it.next();
     }
 
     @Test
