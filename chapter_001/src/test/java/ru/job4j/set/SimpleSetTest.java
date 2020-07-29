@@ -3,6 +3,7 @@ package ru.job4j.set;
 import org.junit.Test;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
@@ -32,5 +33,12 @@ public class SimpleSetTest {
         Iterator<String> it = set.iterator();
         assertThat(it.next(), is("1"));
         assertThat(it.next(), is("2"));
+    }
+
+    @Test (expected = NoSuchElementException.class)
+    public void callItWithVoidList() {
+        SimpleSet<String> set = new SimpleSet<>();
+        Iterator<String> it = set.iterator();
+        it.next();
     }
 }
