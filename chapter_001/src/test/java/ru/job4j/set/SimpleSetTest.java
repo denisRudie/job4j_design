@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.*;
 
 public class SimpleSetTest {
@@ -40,5 +41,16 @@ public class SimpleSetTest {
         SimpleSet<String> set = new SimpleSet<>();
         Iterator<String> it = set.iterator();
         it.next();
+    }
+
+    @Test
+    public void addNullAndCallIt() {
+        SimpleSet<String> set = new SimpleSet<>();
+        set.add(null);
+        set.add("1");
+
+        Iterator<String> it = set.iterator();
+        assertThat(it.next(), is(nullValue()));
+        assertThat(it.next(), is("1"));
     }
 }
