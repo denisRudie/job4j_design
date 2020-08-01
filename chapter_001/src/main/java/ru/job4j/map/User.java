@@ -21,7 +21,8 @@ public class User {
         int result = 17;
         result = result * x + name.hashCode();
         result = result * x + children;
-        return result;
+        result = result * x + birthday.hashCode();
+        return Math.abs(result);
     }
 
     @Override
