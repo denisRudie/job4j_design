@@ -1,21 +1,27 @@
 package ru.job4j.map;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
-public class CustomHashMap<K, V> {
+public class CustomHashMap<K, V> implements Iterable<V> {
 
-    private int DEFAULT_SIZE = 16;
+    private int DEFAULT_CAPACITY = 16;
+    private int capacity;
     private Node<K, V>[] hashTable;
     private float threshold;
-    private int size = 0;
+    private int size;
+    private int modCount;
 
     public CustomHashMap() {
-        hashTable = new Node[DEFAULT_SIZE];
-        threshold = hashTable.length * 0.75f;
+        capacity = DEFAULT_CAPACITY;
+        hashTable = new Node[capacity];
+        threshold = capacity * 0.75f;
+        size = 0;
+        modCount = 0;
     }
 
     public boolean insert(K key, V value) {
+        modCount++;
+
         if (size + 1 >= threshold) {
             threshold *= 2;
             doubleCapacity();
@@ -44,7 +50,7 @@ public class CustomHashMap<K, V> {
 
     private void doubleCapacity() {
         Node<K, V>[] oldHashTable = hashTable;
-        hashTable = new Node[hashTable.length * 2];
+        hashTable = new Node[capacity * 2];
 
         for (Node<K, V> node : oldHashTable) {
             if (node != null) {
@@ -63,7 +69,7 @@ public class CustomHashMap<K, V> {
     }
 
     public int hash(K key) {
-        return key.hashCode() % hashTable.length;
+        return (key == null) ? 0 : Math.abs(key.hashCode()) % capacity;
     }
 
     public V get(K key) {
@@ -100,11 +106,56 @@ public class CustomHashMap<K, V> {
         return false;
     }
 
+    @Override
+    public Iterator<V> iterator() {
+        return new Iterator<V>() {
+            private int bucketCounter = 0;
+            private int returnedValuesCounter = 0;
+            private Iterator<Node<K, V>> innerIterator = null;
+            private int expectedModCount = modCount;
+
+            @Override
+            public boolean hasNext() {
+                if (expectedModCount != modCount) {
+                    throw new ConcurrentModificationException();
+                }
+
+                if (returnedValuesCounter == size) {
+                    return false;
+                }
+
+                if (innerIterator == null || !innerIterator.hasNext()) {
+                    bucketCounter++;
+
+                    while (bucketCounter < capacity - 1 && hashTable[bucketCounter] == null) {
+                        bucketCounter++;
+                    }
+
+                    if (bucketCounter < capacity) {
+                        innerIterator = hashTable[bucketCounter].nodeList.iterator();
+                    } else {
+                        return false;
+                    }
+                }
+                return innerIterator.hasNext();
+            }
+
+            @Override
+            public V next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                returnedValuesCounter++;
+                return innerIterator.next().value;
+            }
+        };
+    }
+
     private static class Node<K, V> {
 
-        K key;
-        V value;
-        List<Node<K, V>> nodeList = new LinkedList<>();
+        private K key;
+        private V value;
+        private List<Node<K, V>> nodeList = new LinkedList<>();
 
         public Node(K key, V value) {
             this.key = key;
