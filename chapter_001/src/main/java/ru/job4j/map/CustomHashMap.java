@@ -36,7 +36,7 @@ public class CustomHashMap<K, V> implements Iterable<V> {
 
         for (Node<K, V> node : hashTable[index].nodeList) {
             if (node.key.hashCode() == key.hashCode()) {
-                if (node.key.equals(key)) {
+                if (Objects.equals(node.key, key)) {
                     node.value = value;
                     return true;
                 }
@@ -77,7 +77,7 @@ public class CustomHashMap<K, V> implements Iterable<V> {
 
         if (hashTable[index] != null) {
             for (Node<K, V> node : hashTable[index].nodeList) {
-                if (node.key.equals(key)) {
+                if (Objects.equals(node.key, key)) {
                     return node.value;
                 }
             }
@@ -95,7 +95,7 @@ public class CustomHashMap<K, V> implements Iterable<V> {
         if (hashTable[index] != null) {
             for (Node<K, V> node : hashTable[index].nodeList) {
                 if (node.key.hashCode() == key.hashCode()) {
-                    if (node.key.equals(key)) {
+                    if (Objects.equals(node.key, key)) {
                         hashTable[index].nodeList.remove(node);
                         size--;
                         return true;
