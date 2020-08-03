@@ -29,4 +29,18 @@ public class TreeTest {
                 is(false)
         );
     }
+
+    @Test
+    public void whenAdd3ChildrenThenNotBinaryTree() {
+        Tree<Integer> tree = new Tree<>(1);
+        tree.add(1, 2);
+        tree.add(1, 3);
+        tree.add(1, 4);
+        tree.add(4, 5);
+        tree.add(5, 6);
+        assertThat(
+                tree.isBinary(),
+                is(false)
+        );
+    }
 }
