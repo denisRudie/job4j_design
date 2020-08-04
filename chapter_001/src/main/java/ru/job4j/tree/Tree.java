@@ -6,9 +6,13 @@ import java.util.Optional;
 public class Tree<E> implements SimpleTree<E> {
 
     private final Node<E> root;
+    private int size;
+    private boolean binary;
 
     Tree(final E root) {
         this.root = new Node<>(root);
+        this.size = 1;
+        this.binary = true;
     }
 
     @Override
@@ -27,6 +31,11 @@ public class Tree<E> implements SimpleTree<E> {
             rsl = true;
         }
 
+        if (parentNode.get().children.size() > 2) {
+            binary = false;
+        }
+
+        size++;
         return rsl;
     }
 
@@ -47,15 +56,6 @@ public class Tree<E> implements SimpleTree<E> {
     }
 
     public boolean isBinary() {
-        Queue<Node<E>> data = new LinkedList<>();
-        data.offer(this.root);
-        while (!data.isEmpty()) {
-            Node<E> el = data.poll();
-            if (el.children.size() > 2) {
-                return false;
-            }
-            data.addAll(el.children);
-        }
-        return true;
+        return  binary && size > 1;
     }
 }
