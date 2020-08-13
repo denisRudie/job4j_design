@@ -1,15 +1,14 @@
 package ru.job4j.io;
 
-import java.io.BufferedReader;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.PrintWriter;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Analizy {
     public void unavailable(String source, String target) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(source));
-             PrintWriter out = new PrintWriter(new FileOutputStream(target))) {
+        List<String> rslList = new ArrayList<>();
 
+        try (BufferedReader reader = new BufferedReader(new FileReader(source))) {
             String from = null;
 
             while (reader.ready()) {
@@ -21,12 +20,18 @@ public class Analizy {
                     }
                 } else {
                     if (from != null) {
-                        out.println(from + ";" + temp[1]);
+                        rslList.add(from + ";" + temp[1]);
                         from = null;
                     }
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try (PrintWriter out = new PrintWriter(new FileOutputStream(target))) {
+            rslList.forEach(out::println);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

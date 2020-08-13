@@ -13,8 +13,8 @@ public class AnalizyTest {
     @Test
     public void whenHave2PeriodsOfUnavailable() {
         Analizy analizy = new Analizy();
-        analizy.unavailable("data/log.txt", "unavailable.csv");
-        try (BufferedReader reader = new BufferedReader(new FileReader("unavailable.csv"))){
+        analizy.unavailable("data/log.txt", "data/unavailable.csv");
+        try (BufferedReader reader = new BufferedReader(new FileReader("data/unavailable.csv"))){
             assertThat(reader.readLine(), is("10:57:01;10:59:01"));
             assertThat(reader.readLine(), is("11:01:02;11:02:02"));
         } catch (IOException e) {
