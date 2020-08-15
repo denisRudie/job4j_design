@@ -13,8 +13,17 @@ public class Search {
     private static List<Path> pathList = new ArrayList<>();
 
     public static void main(String[] args) throws IOException {
-        Path start = Paths.get(".");
-        search(start, "txt").forEach(System.out::println);
+        if (args.length < 2) {
+            throw new IllegalArgumentException("Required arguments not found. "
+                    + "Choose root folder and file extension in params");
+        }
+
+        Path start = Paths.get(args[0]);
+
+        if (!start.toFile().isDirectory()) {
+            throw new IllegalArgumentException(String.format("It is not directory: %s", start));
+        }
+        search(start, args[1]).forEach(System.out::println);
     }
 
     public static List<Path> search(Path root, String ext) throws IOException {
