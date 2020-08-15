@@ -3,10 +3,8 @@ package ru.job4j.io;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class DublicateFounder {
 
@@ -14,60 +12,59 @@ public class DublicateFounder {
      * Метод для поиска дубликатов. Дубликатами считаются файлы,
      * имеющие одинаковое название и размер.
      *
-     * Алгоритм:
-     * 1. Обойти дерево, найти файлы с одинаковыми названиями, сложить в мапу.
-     * 2. Обойти мапу, среди файлов с одинаковыми названиями найти файлы
-     * с одинаковыми размерами, сложить в мапу.
-     *
      * @param folder Папка для поиска дубликатов.
      * @throws IOException Possible.
      */
     public static void foundDublicate(Path folder) throws IOException {
         MyVisitor visitor = new MyVisitor();
         Files.walkFileTree(folder, visitor);
-        Map<Path, List<Path>> visitorMap = visitor.getMap();
-
-        for (Map.Entry<Path, List<Path>> pathListEntry : visitorMap.entrySet()) {
-            Path key = pathListEntry.getKey();
-            List<Path> value = pathListEntry.getValue();
-            if (value.size() > 1) {
-                Map<Long, List<Path>> sameSize = new HashMap<>();
-
-                for (Path v : value) {
-                    long size = v.toFile().length();
-
-                    if (!sameSize.containsKey(size)) {
-                        sameSize.put(size, new ArrayList<>());
-                    }
-                    sameSize.get(size).add(v.toAbsolutePath());
-                }
-
-                for (Map.Entry<Long, List<Path>> longListEntry : sameSize.entrySet()) {
-                    if (longListEntry.getValue().size() > 1) {
-                        System.out.println(key + " size: " + longListEntry.getKey());
-                        for (Path path : longListEntry.getValue()) {
-                            System.out.println(path.toAbsolutePath());
-                        }
-                    }
-                }
-            }
-        }
+        visitor.getMap().entrySet().stream()
+                .filter(e -> e.getValue().size() > 1)
+                .flatMap(e -> Stream.of(e.getValue()))
+                .forEach(System.out::println);
     }
 
     public static class MyVisitor extends SimpleFileVisitor<Path> {
-        private Map<Path, List<Path>> map = new HashMap<>();
+        private Map<Node<Path, Long>, List<Path>> map = new HashMap<>();
 
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-            if (!map.containsKey(file.getFileName())) {
-                map.put(file.getFileName(), new ArrayList<>());
+            Node<Path, Long> newNode = new Node<>(file.getFileName(), file.toFile().length());
+
+            if (!map.containsKey(newNode)) {
+                map.put(newNode, new ArrayList<>());
             }
-            map.get(file.getFileName()).add(file.toAbsolutePath());
+            map.get(newNode).add(file.toAbsolutePath());
+
             return FileVisitResult.CONTINUE;
         }
 
-        public Map<Path, List<Path>> getMap() {
+        public Map<Node<Path, Long>, List<Path>> getMap() {
             return map;
+        }
+
+        private static class Node<K, V> {
+            K path;
+            V size;
+
+            public Node(K path, V size) {
+                this.path = path;
+                this.size = size;
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
+                Node<?, ?> node = (Node<?, ?>) o;
+                return Objects.equals(path, node.path) &&
+                        Objects.equals(size, node.size);
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(path, size);
+            }
         }
     }
 
