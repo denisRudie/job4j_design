@@ -8,23 +8,26 @@ import java.util.zip.ZipOutputStream;
 
 public class Zip {
 
-    public void packFiles(List<Path> sources, Path target) {
-        try (ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(target.toFile())))) {
+    public void packFiles(List<Path> sources, Path target, int pathNameCounter) {
+        try (ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(target.toString())))) {
             for (Path src : sources) {
-                zip.putNextEntry(new ZipEntry(src.toFile().getName()));
-                try (BufferedInputStream out = new BufferedInputStream(new FileInputStream(src.toFile()))) {
+                ZipEntry ze = new ZipEntry(src.subpath(pathNameCounter,
+                        src.getNameCount()).toString());
+                zip.putNextEntry(ze);
+
+                try (BufferedInputStream out = new BufferedInputStream(new FileInputStream(src.toString()))) {
                     zip.write(out.readAllBytes());
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     public void packSingleFile(File source, File target) {
         try (ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(target)))) {
             zip.putNextEntry(new ZipEntry(source.getName()));
+
             try (BufferedInputStream out = new BufferedInputStream(new FileInputStream(source))) {
                 zip.write(out.readAllBytes());
                 zip.closeEntry();
@@ -42,10 +45,11 @@ public class Zip {
         }
 
         try {
-            List<Path> pathList = Search.search(Path.of(argZip.directory()),
+            Path path = Path.of(argZip.directory());
+            List<Path> pathList = Search.search(path,
                     p -> !p.toFile().getName().endsWith(argZip.exclude()));
 
-            new Zip().packFiles(pathList, Path.of(argZip.output()));
+            new Zip().packFiles(pathList, Path.of(argZip.output()), path.getNameCount());
         } catch (IOException e) {
             e.printStackTrace();
         }

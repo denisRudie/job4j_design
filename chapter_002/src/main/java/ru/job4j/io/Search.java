@@ -44,7 +44,7 @@ public class Search {
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
             if (pr.test(file)) {
-                pathList.add(file.toAbsolutePath());
+                pathList.add(file);
             }
             return CONTINUE;
         }
