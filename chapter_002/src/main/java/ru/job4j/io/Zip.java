@@ -9,15 +9,22 @@ import java.util.zip.ZipOutputStream;
 public class Zip {
 
     public void packFiles(List<Path> sources, Path target) {
-        for (Path src : sources) {
-            packSingleFile(src.toFile(), target.toFile());
-            System.out.println("writing");
+        try (ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(target.toFile())))) {
+            for (Path src : sources) {
+                zip.putNextEntry(new ZipEntry(src.toFile().getName()));
+                try (BufferedInputStream out = new BufferedInputStream(new FileInputStream(src.toFile()))) {
+                    zip.write(out.readAllBytes());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
     }
 
     public void packSingleFile(File source, File target) {
         try (ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(target)))) {
-            zip.putNextEntry(new ZipEntry(source.getAbsolutePath()));
+            zip.putNextEntry(new ZipEntry(source.getName()));
             try (BufferedInputStream out = new BufferedInputStream(new FileInputStream(source))) {
                 zip.write(out.readAllBytes());
                 zip.closeEntry();
