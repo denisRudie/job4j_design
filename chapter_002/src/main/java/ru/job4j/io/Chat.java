@@ -17,14 +17,7 @@ public class Chat {
         return ThreadLocalRandom.current().nextInt(0, size);
     }
 
-    private static String getTime() {
-        DateTimeFormatter sdf = DateTimeFormatter.ofPattern("HH:mm:ss", Locale.ENGLISH);
-        LocalDateTime now = LocalDateTime.now();
-        return sdf.format(now);
-    }
-
-    public static void main(String[] args) {
-
+    private static void startChatting() {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
             List<String> strings;
             StringBuilder sb = new StringBuilder();
@@ -66,5 +59,15 @@ public class Chat {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static String getTime() {
+        DateTimeFormatter sdf = DateTimeFormatter.ofPattern("HH:mm:ss", Locale.ENGLISH);
+        LocalDateTime now = LocalDateTime.now();
+        return sdf.format(now);
+    }
+
+    public static void main(String[] args) {
+        startChatting();
     }
 }
