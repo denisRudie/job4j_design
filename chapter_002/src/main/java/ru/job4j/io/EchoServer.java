@@ -15,14 +15,15 @@ public class EchoServer {
 
     public static void serverStart() {
         try (ServerSocket server = new ServerSocket(9000)) {
-            while (true) {
+            boolean working = true;
+
+            while (working) {
                 Socket socket = server.accept();
                 try (OutputStream out = socket.getOutputStream();
                      BufferedReader in = new BufferedReader(
                              new InputStreamReader(socket.getInputStream()))) {
                     String str;
                     StringBuilder msg = new StringBuilder();
-                    boolean working = true;
                     boolean firstString = true;
 
                     while (!(str = in.readLine()).isEmpty()) {
@@ -41,10 +42,9 @@ public class EchoServer {
                     }
 
                     out.write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
-                    if (!working) {
-                        break;
+                    if (working) {
+                        out.write(msg.toString().getBytes());
                     }
-                    out.write(msg.toString().getBytes());
                 }
             }
         } catch (IOException e) {
