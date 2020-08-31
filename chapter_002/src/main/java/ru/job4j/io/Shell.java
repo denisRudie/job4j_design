@@ -1,60 +1,34 @@
 package ru.job4j.io;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Arrays;
+import java.util.LinkedList;
 
 public class Shell {
-    private final List<String> elements = new ArrayList<>();
-    private final StringBuilder sb = new StringBuilder();
+    private LinkedList<String> list = new LinkedList<>();
 
     public void cd(String path) {
-        String command = "";
-
-//        looking for complex request
-        Pattern p = Pattern.compile("/\\w+");
-        Matcher m = p.matcher(path);
-        while (m.find()) {
-            elements.add(m.group().substring(1));
+        if (path.equals("/")) {
+            list.clear();
+            return;
         }
 
-//        looking for simple request
-        Pattern p2 = Pattern.compile("^\\w+$");
-        Matcher m2 = p2.matcher(path);
-        if (m2.find()) {
-            elements.add(m2.group());
-        }
+        Arrays.stream(path.split("/"))
+                .filter(s -> !s.equals(""))
+                .forEach(list::add);
 
-//        looking for command
-        Pattern patCmd = Pattern.compile("(\\.\\.|/)$");
-        Matcher matCmd = patCmd.matcher(path);
-        if (matCmd.find()) {
-            command = (matCmd.group());
+        if (list.getLast().equals("..")) {
+            list.pollLast();
+            list.pollLast();
         }
-
-        if (command.equals("..")) {
-            back();
-        } else if (command.equals("/")) {
-            root();
-        }
-    }
-
-    private void back() {
-        if (elements.size() > 0) {
-            elements.remove(elements.size() - 1);
-        }
-    }
-
-    private void root() {
-        elements.clear();
     }
 
     public String pwd() {
-        if (elements.size() == 0) {
+        StringBuilder sb = new StringBuilder();
+
+        if (list.size() == 0) {
             sb.append("/");
         } else {
-            elements.forEach(s -> {
+            list.forEach(s -> {
                 sb.append("/");
                 sb.append(s);
             });
