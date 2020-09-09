@@ -27,7 +27,13 @@ public class ImportDB {
         try (BufferedReader rd = new BufferedReader(new FileReader(dump))) {
             rd.lines().forEach(s -> {
                 String[] temp = s.split(";");
-                users.add(new User(temp[0], temp[1]));
+                if (temp.length > 1
+                        && temp[0].matches(
+                        "^(([\\p{L}\\p{N}])+(\\s)*([\\p{L}\\p{N}]))+$")
+                        && temp[1].matches(
+                        "^[\\w.\\-]+@([A-Za-z0-9]+([\\w.\\-]*[\\p{L}\\p{N}]+)*\\.)+[\\p{L}]*$")) {
+                    users.add(new User(temp[0], temp[1]));
+                }
             });
         }
         return users;
