@@ -3,7 +3,10 @@ package ru.job4j.jdbc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -11,11 +14,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 public class ImportDB {
     private static final Logger LOG = LoggerFactory.getLogger(ImportDB.class);
     private Properties cfg;
     private String dump;
+    private Pattern userPattern = Pattern
+            .compile("^(([\\p{L}\\p{N}])+(\\s)*([\\p{L}\\p{N}]))+$");
+    private Pattern emailPattern = Pattern
+            .compile("^[\\w.\\-]+@([A-Za-z0-9]+([\\w.\\-]*[\\p{L}\\p{N}]+)*\\.)+[\\p{L}]*$");
 
     public ImportDB(Properties cfg, String dump) {
         this.cfg = cfg;
@@ -28,11 +36,9 @@ public class ImportDB {
             rd.lines().forEach(s -> {
                 String[] temp = s.split(";");
                 if (temp.length > 1
-                        && temp[0].matches(
-                        "^(([\\p{L}\\p{N}])+(\\s)*([\\p{L}\\p{N}]))+$")
-                        && temp[1].matches(
-                        "^[\\w.\\-]+@([A-Za-z0-9]+([\\w.\\-]*[\\p{L}\\p{N}]+)*\\.)+[\\p{L}]*$")) {
-                    users.add(new User(temp[0], temp[1]));
+                        && userPattern.matcher(temp[0]).matches()
+                        && emailPattern.matcher(temp[1]).matches()) {
+                        users.add(new User(temp[0], temp[1]));
                 }
             });
         }
