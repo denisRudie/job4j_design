@@ -38,7 +38,7 @@ public class SoftRefCache {
     public String getText(String fileName) {
         String text = "";
 
-        if (cache.containsKey(fileName) && cache.get(fileName) != null) {
+        if (cache.containsKey(fileName) && cache.get(fileName).get() != null) {
             text = cache.get(fileName).get();
         } else {
             Optional<Path> opt = textFiles.stream()
