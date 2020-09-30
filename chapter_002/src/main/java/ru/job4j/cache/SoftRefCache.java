@@ -36,25 +36,40 @@ public class SoftRefCache {
      * @return text from file.
      */
     public String getText(String fileName) {
-        String text = "";
+        String text;
 
-        if (cache.containsKey(fileName) && cache.get(fileName).get() != null) {
+        if (cache.containsKey(fileName)) {
             text = cache.get(fileName).get();
-        } else {
-            Optional<Path> opt = textFiles.stream()
-                    .filter(p -> p.getFileName().toString().equals(fileName))
-                    .findFirst();
-            if (opt.isPresent()) {
-                Path path = opt.get();
-                try {
-                    text = Files.readString(path);
-                    cache.put(fileName, new SoftReference<>(text));
-                } catch (IOException e) {
-                    LOG.error(e.getMessage(), e);
-                }
-            } else {
-                throw new IllegalArgumentException("file doesn't exist in directory");
+            if (text == null) {
+                text = loadTextFromFile(fileName);
             }
+        } else {
+            text = loadTextFromFile(fileName);
+        }
+        return text;
+    }
+
+    /**
+     * Method for reading text from file and adding text to cache.
+     *
+     * @param fileName for getting text.
+     * @return text from file.
+     */
+    private String loadTextFromFile(String fileName) {
+        String text = "";
+        Optional<Path> opt = textFiles.stream()
+                .filter(p -> p.getFileName().toString().equals(fileName))
+                .findFirst();
+        if (opt.isPresent()) {
+            Path path = opt.get();
+            try {
+                text = Files.readString(path);
+                cache.put(fileName, new SoftReference<>(text));
+            } catch (IOException e) {
+                LOG.error(e.getMessage(), e);
+            }
+        } else {
+            throw new IllegalArgumentException("file doesn't exist in directory");
         }
         return text;
     }
