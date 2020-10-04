@@ -31,4 +31,13 @@ public class User {
                 ", email=" + email +
                 '}';
     }
+
+    public boolean equals(User right) {
+        for (String rs : right.email) {
+            if (this.email.contains(rs)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

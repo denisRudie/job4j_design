@@ -33,17 +33,52 @@ public class Post {
                 left = users.get(i);
                 for (int j = i + 1; j < users.size(); j++) {
                     right = users.get(j);
-                    for (String s : right.getEmail()) {
-                        if (left.getEmail().contains(s)) {
-                            left.getEmail().addAll(right.getEmail());
-                            users.remove(right);
-                            complete = false;
-                            break;
-                        }
+                    if (left.equals(right)) {
+                        left.getEmail().addAll(right.getEmail());
+                        users.remove(right);
+                        complete = false;
+                        break;
                     }
                 }
             }
         }
+        return users;
+    }
+
+    /**
+     * Метод сравнивает 2 соседних элемента листа users.
+     * Если их нельзя схлопнуть - правый элемент сдвигается на одно значение вправо.
+     * Если можно схлопнуть - левый элемент сдвигается на одно значение вправо.
+     * Сравнения выполняются до сих пор, пока весь лист не будет пройден без модификаций.
+     *
+     * @return Схлопнутый список юзеров.
+     */
+    public List<User> bubbleUnion() {
+
+        boolean complete = false;
+
+        while (!complete) {
+            User left;
+            User right;
+            int cursor = 0;
+            int delta = 1;
+            complete = true;
+
+            while (cursor < users.size() - delta) {
+                left = users.get(cursor);
+                right = users.get(cursor + delta);
+                if (left.equals(right)) {
+                    left.getEmail().addAll(right.getEmail());
+                    users.remove(right);
+                    complete = false;
+                    cursor++;
+                    delta = 1;
+                } else {
+                    delta++;
+                }
+            }
+        }
+
         return users;
     }
 }

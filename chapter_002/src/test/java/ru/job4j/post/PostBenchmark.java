@@ -46,6 +46,11 @@ public class PostBenchmark {
         return post.union();
     }
 
+    @Benchmark
+    public List<User> bubbleUnion() {
+        return post.bubbleUnion();
+    }
+
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
                 .include(PostBenchmark.class.getSimpleName())
