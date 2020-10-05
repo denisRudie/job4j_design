@@ -14,14 +14,14 @@ public class SoftRefCacheTest {
 
     @Test
     public void whenAddFileIntoCacheThenTryToRequest() {
-        File testFile = new File("./src/main/java/ru/job4j/cache/files/test99.txt");
+        File testFile = new File("./src/test/java/ru/job4j/cache/files/test99.txt");
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(testFile))) {
             writer.write("Testing...");
         } catch (IOException e) {
             e.printStackTrace();
         }
         SoftRefCache softRefCache = SoftRefCache.createCache(
-                "./src/main/java/ru/job4j/cache/files");
+                "./src/test/java/ru/job4j/cache/files");
         String txt = softRefCache.getText("test99.txt");
         assertThat(txt, is("Testing..."));
     }
