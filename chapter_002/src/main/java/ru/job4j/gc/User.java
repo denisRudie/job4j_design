@@ -32,6 +32,14 @@ public class User {
             new User(UUID.randomUUID().toString(), new Date());
             gcCounter++;
         }
+
+//        WeakReference<User> weak = new WeakReference<>(new User(UUID.randomUUID().toString(),
+//                new Date()));
+//        SoftReference<User> soft = new SoftReference<>(new User(UUID.randomUUID().toString(),
+//                new Date()));
+//        System.gc();
+//        System.out.println(weak.get());
+//        System.out.println(soft.get());
     }
 
     public static long getUsedMemory() {
