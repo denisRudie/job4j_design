@@ -1,18 +1,19 @@
 package ru.job4j.parking;
 
 import java.util.Map;
+import java.util.Optional;
 
 public interface Parking {
 
-    boolean accept(Transport transport);
+    int accept(Transport transport);
 
-    boolean add(Transport transport);
+    int add(Transport transport);
 
     void removeByTransport(Transport transport);
-
-    void removeBySpaceId(int id);
 
     int getFreeSpaces();
 
     Map<Integer, Transport> getTransportList();
+
+    Optional<Transport> getTransportBySpaceId(int id);
 }

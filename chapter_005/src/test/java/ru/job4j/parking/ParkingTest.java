@@ -1,14 +1,13 @@
 package ru.job4j.parking;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class ParkingTest {
 
-    @Ignore
     @Test
     public void whenParkCarToParkingWithFreeSpaces() {
         TransportParking tp = new TransportParking("parking1", 1);
@@ -18,7 +17,6 @@ public class ParkingTest {
         assertThat(tp.getFreeSpaces(), is(0));
     }
 
-    @Ignore
     @Test
     public void whenParkTruckToParkingWithFreeSpaces() {
         TransportParking tp = new TransportParking("parking1", 2);
@@ -28,40 +26,35 @@ public class ParkingTest {
         assertThat(tp.getFreeSpaces(), is(0));
     }
 
-    @Ignore
     @Test
     public void whenParkCarToParkingWithoutFreeSpaces() {
         TransportParking tp = new TransportParking("parking1", 0);
         Transport car = new Car("kia");
-        assertThat(tp.add(car), is(false));
+        assertThat(tp.add(car), is(-1));
     }
 
-    @Ignore
     @Test
     public void whenParkTruckToParkingWithoutFreeSpaces() {
         TransportParking tp = new TransportParking("parking1", 1);
         Transport truck = new Truck("kamaz");
-        assertThat(tp.add(truck), is(false));
+        assertThat(tp.add(truck), is(-1));
     }
 
-    @Ignore
     @Test
     public void whenTryToParkTruckAmong2Cars() {
-        TransportParking tp = new TransportParking("parking1", 4);
+        TransportParking tp = new TransportParking("parking1", 3);
         Transport car1 = new Car("car1");
         tp.add(car1);
         Transport car2 = new Car("car2");
         tp.add(car2);
         Transport car3 = new Car("car3");
         tp.add(car3);
-        Transport car4 = new Car("car4");
-        tp.add(car4);
 
-        tp.removeBySpaceId(1);
-        tp.removeBySpaceId(3);
+        Transport transport = tp.getTransportBySpaceId(1).get();
+        tp.removeByTransport(transport);
 
         Transport truck = new Truck("kamaz");
-        assertThat(tp.getFreeSpaces(), is(2));
-        assertThat(tp.add(truck), is(false));
+        assertThat(tp.getFreeSpaces(), is(1));
+        assertThat(tp.add(truck), is(-1));
     }
 }
