@@ -1,18 +1,18 @@
 package ru.job4j.shop;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 public class Food {
 
     private final String name;
-    private final Date expireDate;
-    private final Date createDate;
+    private final LocalDate expireDate;
+    private final LocalDate createDate;
     private Double price;
     private int discount;
 
-    public Food(String name, Date expireDate, Date createDate, Double price) {
+    public Food(String name, LocalDate expireDate, LocalDate createDate, Double price) {
         this.name = name;
         this.expireDate = expireDate;
         this.createDate = createDate;
@@ -23,11 +23,11 @@ public class Food {
         return name;
     }
 
-    public Date getExpireDate() {
+    public LocalDate getExpireDate() {
         return expireDate;
     }
 
-    public Date getCreateDate() {
+    public LocalDate getCreateDate() {
         return createDate;
     }
 
@@ -62,13 +62,10 @@ public class Food {
      * @return expiring parameter from 0% to 100%.
      */
     public int getExpiredPercentage() {
-        long create = createDate.getTime();
-        long expire = expireDate.getTime();
-
-        long totalLifeTime = expire - create;
-        long currentLifeTime = System.currentTimeMillis() - create;
-
-        return (int) (currentLifeTime * 100 / totalLifeTime);
+        int totalLifeTime = (int) ChronoUnit.DAYS.between(createDate, expireDate);
+        LocalDate currentDate = LocalDate.now();
+        int currentLifeTime = (int) ChronoUnit.DAYS.between(createDate, currentDate);
+        return (currentLifeTime * 100) / totalLifeTime;
     }
 
     @Override
@@ -84,17 +81,5 @@ public class Food {
     @Override
     public int hashCode() {
         return Objects.hash(name, expireDate, createDate);
-    }
-
-    public static void main(String[] args) {
-        Calendar cal1 = Calendar.getInstance();
-        Calendar cal2 = Calendar.getInstance();
-
-        cal1.set(2020, Calendar.OCTOBER, 5);
-        cal2.set(2020, Calendar.OCTOBER, 15);
-
-        Food food = new Food("1", cal2.getTime(), cal1.getTime(), 100.0);
-
-        System.out.println(food.getExpiredPercentage());
     }
 }

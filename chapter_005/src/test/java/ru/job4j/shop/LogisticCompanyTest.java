@@ -3,10 +3,11 @@ package ru.job4j.shop;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Calendar;
+import java.time.LocalDate;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class LogisticCompanyTest {
     private Food candidateToWarehouse;
@@ -19,35 +20,32 @@ public class LogisticCompanyTest {
      */
     @Before
     public void prepareData() {
-        Calendar cal1 = Calendar.getInstance();
-        Calendar cal2 = Calendar.getInstance();
-
-        cal1.set(2020, Calendar.OCTOBER, 1);
-        cal2.set(2020, Calendar.NOVEMBER, 30);
-        candidateToWarehouse = new Food("potato",
-                cal2.getTime(),
-                cal1.getTime(),
+        LocalDate create1 = LocalDate.now().minusDays(9);
+        LocalDate expire1 = LocalDate.now().plusMonths(2);
+        candidateToWarehouse = new Food("candidateToWarehouse",
+                expire1,
+                create1,
                 100.55D);
 
-        cal1.set(2020, Calendar.OCTOBER, 2);
-        cal2.set(2020, Calendar.OCTOBER, 11);
-        candidateToShopAndDiscount = new Food("tomato",
-                cal2.getTime(),
-                cal1.getTime(),
+        LocalDate create2 = LocalDate.now().minusDays(8);
+        LocalDate expire2 = LocalDate.now().plusDays(1);
+        candidateToShopAndDiscount = new Food("candidateToShopAndDiscount",
+                expire2,
+                create2,
                 100.55D);
 
-        cal1.set(2020, Calendar.OCTOBER, 4);
-        cal2.set(2020, Calendar.OCTOBER, 16);
-        candidateToShop = new Food("snickers",
-                cal2.getTime(),
-                cal1.getTime(),
+        LocalDate create3 = LocalDate.now().minusDays(6);
+        LocalDate expire3 = LocalDate.now().plusDays(6);
+        candidateToShop = new Food("candidateToShop",
+                expire3,
+                create3,
                 100.55D);
 
-        cal1.set(2020, Calendar.OCTOBER, 6);
-        cal2.set(2020, Calendar.OCTOBER, 10);
-        candidateToTrash = new Food("juice",
-                cal2.getTime(),
-                cal1.getTime(),
+        LocalDate create4 = LocalDate.now().minusDays(4);
+        LocalDate expire4 = LocalDate.now();
+        candidateToTrash = new Food("candidateToTrash",
+                expire4,
+                create4,
                 100.55D);
     }
 
