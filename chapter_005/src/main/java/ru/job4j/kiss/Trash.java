@@ -11,7 +11,7 @@ public class Trash implements Store {
 
     public Trash() {
         this.foodList = new ArrayList<>();
-        QualityService.getInstance().addStore(this);
+        TransferService.getInstance().addStore(this);
     }
 
     @Override

@@ -7,14 +7,14 @@ import ru.job4j.shop.Food;
 import java.time.LocalDate;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class QualityServiceTest {
 
     private Food candidateToWarehouse;
     private Food candidateToShopAndDiscount;
     private Food candidateToShop;
+    private Food candidateToShop2;
     private Food candidateToTrash;
 
     @Before
@@ -46,26 +46,64 @@ public class QualityServiceTest {
                 expire4,
                 create4,
                 100.55D);
+
+        LocalDate create5 = LocalDate.now().minusDays(6);
+        LocalDate expire5 = LocalDate.now().plusDays(6);
+        candidateToShop2 = new Food("candidateToShop2",
+                expire5,
+                create5,
+                100.55D);
     }
 
     @Test
-    public void test() {
+    public void whenAddFoodToTransferServiceThenTransfer() {
         Store shop = new Shop();
-        shop.add(candidateToTrash);
-
         Store warehouse = new Warehouse();
-        warehouse.add(candidateToShopAndDiscount);
-        warehouse.add(candidateToShop);
-
         Store trash = new Trash();
-        trash.add(candidateToWarehouse);
 
-        QualityService qs = QualityService.getInstance();
-        qs.qualityCheck();
+        TransferService ts = TransferService.getInstance();
+        ts.addUnsortedFood(candidateToShop);
+        ts.addUnsortedFood(candidateToShopAndDiscount);
+        ts.addUnsortedFood(candidateToWarehouse);
+        ts.addUnsortedFood(candidateToTrash);
+
+        ts.transferUnsortedFood();
 
         assertThat(shop.getFoodList().size(), is(2));
         assertTrue(shop.getFoodList().contains(candidateToShop));
         assertTrue(shop.getFoodList().contains(candidateToShopAndDiscount));
+
+        assertThat(warehouse.getFoodList().size(), is(1));
+        assertTrue(warehouse.getFoodList().contains(candidateToWarehouse));
+
+        assertThat(trash.getFoodList().size(), is(1));
+        assertTrue(trash.getFoodList().contains(candidateToTrash));
+    }
+
+    @Test
+    public void addFoodToWrongStoreThanQualityServiceCheckAndTransfer() {
+        Store shop = new Shop();
+        Store warehouse = new Warehouse();
+        Store trash = new Trash();
+
+        TransferService ts = TransferService.getInstance();
+        ts.addUnsortedFood(candidateToShop);
+        ts.addUnsortedFood(candidateToShopAndDiscount);
+        ts.addUnsortedFood(candidateToWarehouse);
+        ts.addUnsortedFood(candidateToTrash);
+
+        ts.transferUnsortedFood();
+
+        trash.add(candidateToShop2);
+
+        assertFalse(QualityService.qualityCheck());
+
+        ts.transferUnsortedFood();
+
+        assertThat(shop.getFoodList().size(), is(3));
+        assertTrue(shop.getFoodList().contains(candidateToShop));
+        assertTrue(shop.getFoodList().contains(candidateToShopAndDiscount));
+        assertTrue(shop.getFoodList().contains(candidateToShop2));
 
         assertThat(warehouse.getFoodList().size(), is(1));
         assertTrue(warehouse.getFoodList().contains(candidateToWarehouse));

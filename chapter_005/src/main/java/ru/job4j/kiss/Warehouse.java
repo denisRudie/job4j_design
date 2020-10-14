@@ -11,7 +11,7 @@ public class Warehouse implements Store {
 
     public Warehouse() {
         this.foodList = new ArrayList<>();
-        QualityService.getInstance().addStore(this);
+        TransferService.getInstance().addStore(this);
     }
 
     @Override

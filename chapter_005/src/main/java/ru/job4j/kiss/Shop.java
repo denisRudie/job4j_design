@@ -11,7 +11,7 @@ public class Shop implements Store {
 
     public Shop() {
         foodList = new ArrayList<>();
-        QualityService.getInstance().addStore(this);
+        TransferService.getInstance().addStore(this);
     }
 
     @Override
