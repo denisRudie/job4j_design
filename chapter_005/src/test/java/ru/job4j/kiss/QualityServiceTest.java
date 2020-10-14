@@ -63,14 +63,16 @@ public class QualityServiceTest {
 
         TransferService ts = TransferService.getInstance();
         ts.addUnsortedFood(candidateToShop);
+        ts.addUnsortedFood(candidateToShop2);
         ts.addUnsortedFood(candidateToShopAndDiscount);
         ts.addUnsortedFood(candidateToWarehouse);
         ts.addUnsortedFood(candidateToTrash);
 
         ts.transferUnsortedFood();
 
-        assertThat(shop.getFoodList().size(), is(2));
+        assertThat(shop.getFoodList().size(), is(3));
         assertTrue(shop.getFoodList().contains(candidateToShop));
+        assertTrue(shop.getFoodList().contains(candidateToShop2));
         assertTrue(shop.getFoodList().contains(candidateToShopAndDiscount));
 
         assertThat(warehouse.getFoodList().size(), is(1));
