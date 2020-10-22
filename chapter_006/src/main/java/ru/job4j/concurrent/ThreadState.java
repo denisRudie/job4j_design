@@ -14,6 +14,9 @@ public class ThreadState {
         first.start();
         second.start();
 
+        while (first.getState() != Thread.State.TERMINATED) {
+            System.out.println(first.getState());
+        }
         try {
             first.join();
             second.join();

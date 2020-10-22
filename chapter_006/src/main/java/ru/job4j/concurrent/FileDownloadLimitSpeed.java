@@ -15,8 +15,9 @@ public class FileDownloadLimitSpeed {
              FileOutputStream fileOutputStream = new FileOutputStream("pom_tmp.xml")) {
             byte[] dataBuffer = new byte[downloadSpeed * 1024];
             int bytesRead;
+            boolean complete = false;
 
-            while (true) {
+            while (!complete) {
                 long start = System.currentTimeMillis();
                 if ((bytesRead = in.read(dataBuffer)) != -1) {
                     fileOutputStream.write(dataBuffer, 0, bytesRead);
@@ -24,7 +25,7 @@ public class FileDownloadLimitSpeed {
                     long downloadTime = finish - start;
                     Thread.sleep(1000 - downloadTime);
                 } else {
-                    break;
+                    complete = true;
                 }
             }
         } catch (IOException e) {
