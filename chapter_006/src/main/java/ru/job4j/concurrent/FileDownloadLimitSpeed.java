@@ -7,12 +7,9 @@ import java.net.URL;
 
 public class FileDownloadLimitSpeed {
 
-    public static void main(String[] args) throws Exception {
-        String url = args[3];
-        int downloadSpeed = Integer.parseInt(args[4]);
-
+    public static void downloadFile(String url, String targetFileSource, int downloadSpeed) {
         try (BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
-             FileOutputStream fileOutputStream = new FileOutputStream("pom_tmp.xml")) {
+             FileOutputStream fileOutputStream = new FileOutputStream(targetFileSource)) {
             byte[] dataBuffer = new byte[downloadSpeed * 1024];
             int bytesRead;
             boolean complete = false;
@@ -28,8 +25,15 @@ public class FileDownloadLimitSpeed {
                     complete = true;
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void main(String[] args) {
+        FileDownloadLimitSpeed.downloadFile(
+                args[3],
+                "downloadedPom.xml",
+                Integer.parseInt(args[4]));
     }
 }
