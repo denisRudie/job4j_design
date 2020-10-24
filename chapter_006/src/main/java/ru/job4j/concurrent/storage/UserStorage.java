@@ -9,11 +9,7 @@ import java.util.Map;
 @ThreadSafe
 public class UserStorage {
     @GuardedBy("this")
-    private final Map<Integer, User> users;
-
-    public UserStorage() {
-        this.users = new HashMap<>();
-    }
+    private final Map<Integer, User> users = new HashMap<>();
 
     public synchronized boolean add(User user) {
         User rsl = users.putIfAbsent(user.getId(), new User(user.getId(), user.getAmount()));
@@ -21,10 +17,8 @@ public class UserStorage {
     }
 
     public synchronized boolean update(User user) {
-        boolean check;
-        check = delete(user);
-        check &= add(user);
-        return check;
+        User prev = users.replace(user.getId(), user);
+        return prev != null;
     }
 
     public synchronized boolean delete(User user) {
