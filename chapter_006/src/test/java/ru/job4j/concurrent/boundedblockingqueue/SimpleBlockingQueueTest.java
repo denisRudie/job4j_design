@@ -12,7 +12,13 @@ public class SimpleBlockingQueueTest {
 
         Thread producer = new Thread(() -> queue.offer(1));
 
-        Thread consumer = new Thread(queue::poll);
+        Thread consumer = new Thread(() -> {
+            try {
+                queue.poll();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        });
 
         producer.start();
         consumer.start();
@@ -30,8 +36,12 @@ public class SimpleBlockingQueueTest {
         Thread producer = new Thread(() -> queue.offer(1));
 
         Thread consumer = new Thread(() -> {
-            queue.poll();
-            queue.poll();
+            try {
+                queue.poll();
+                queue.poll();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         });
 
         producer.start();
