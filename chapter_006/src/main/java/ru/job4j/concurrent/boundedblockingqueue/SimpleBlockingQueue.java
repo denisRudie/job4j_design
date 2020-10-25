@@ -18,16 +18,14 @@ public class SimpleBlockingQueue<T> {
     }
 
     public synchronized T poll() {
-        T value = queue.poll();
-        if (value == null) {
+        while (queue.isEmpty()) {
             try {
                 wait();
-                poll();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }
-        return value;
+        return queue.poll();
     }
 
     public synchronized int size() {
