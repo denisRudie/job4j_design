@@ -63,7 +63,7 @@ public class SimpleBlockingQueueTest {
         consumer.start();
 
         producer.join();
-
+        Thread.sleep(100);
         assertEquals(Thread.State.WAITING, consumer.getState());
     }
 
