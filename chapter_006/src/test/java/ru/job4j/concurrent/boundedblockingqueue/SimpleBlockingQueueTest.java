@@ -8,9 +8,15 @@ public class SimpleBlockingQueueTest {
 
     @Test
     public void oneThreadOfferSecondThreadPoll() throws InterruptedException {
-        SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>();
+        SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(10);
 
-        Thread producer = new Thread(() -> queue.offer(1));
+        Thread producer = new Thread(() -> {
+            try {
+                queue.offer(1);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        });
 
         Thread consumer = new Thread(() -> {
             try {
@@ -31,9 +37,15 @@ public class SimpleBlockingQueueTest {
 
     @Test
     public void oneThreadOfferSecondThreadPollTwoTimes() throws InterruptedException {
-        SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>();
+        SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(10);
 
-        Thread producer = new Thread(() -> queue.offer(1));
+        Thread producer = new Thread(() -> {
+            try {
+                queue.offer(1);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        });
 
         Thread consumer = new Thread(() -> {
             try {
