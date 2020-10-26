@@ -37,7 +37,7 @@ public class SimpleEngine implements Engine {
 
     @Override
     public void start() {
-        while (true) {
+        while (result == null) {
             System.out.println(desk.show());
             System.out.println(System.lineSeparator());
             player1.move(desk);

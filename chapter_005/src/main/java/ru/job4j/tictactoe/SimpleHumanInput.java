@@ -22,7 +22,8 @@ public class SimpleHumanInput implements HumanInput {
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             System.out.println("Enter cell for moving. Format: x y");
 
-            while (true) {
+            boolean turnFinish = false;
+            while (!turnFinish) {
                 String in = reader.readLine();
                 Matcher m = p.matcher(in);
 
@@ -33,7 +34,7 @@ public class SimpleHumanInput implements HumanInput {
                     if (desk.checkAvailabilityToMove(x, y)) {
                         rsl[0] = x;
                         rsl[1] = y;
-                        break;
+                        turnFinish = true;
                     } else {
                         System.out.println("This cell doesn't exist or already taken");
                     }
