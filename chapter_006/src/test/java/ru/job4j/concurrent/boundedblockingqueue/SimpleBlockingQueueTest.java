@@ -87,10 +87,10 @@ public class SimpleBlockingQueueTest {
 
     @Test
     public void whenInterruptConsumerThanTakeAllBefore() throws InterruptedException {
-        SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(3);
+        SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(100);
         CopyOnWriteArrayList<Integer> buffer = new CopyOnWriteArrayList<>();
 
-        Thread producer = new Thread(() -> IntStream.range(0, 3).forEach((i) -> {
+        Thread producer = new Thread(() -> IntStream.range(0, 100).forEach((i) -> {
             try {
                 queue.offer(i);
             } catch (InterruptedException e) {
@@ -100,7 +100,7 @@ public class SimpleBlockingQueueTest {
         producer.start();
 
         Thread consumer = new Thread(() -> {
-            while (!Thread.currentThread().isInterrupted()) {
+            while (!Thread.currentThread().isInterrupted() || queue.size() != 0) {
                 try {
                     buffer.add(queue.poll());
                 } catch (InterruptedException e) {
@@ -114,7 +114,7 @@ public class SimpleBlockingQueueTest {
         consumer.interrupt();
         consumer.join();
 
-        assertEquals(3, buffer.size());
+        assertEquals(100, buffer.size());
         assertEquals(0, queue.size());
     }
 }
