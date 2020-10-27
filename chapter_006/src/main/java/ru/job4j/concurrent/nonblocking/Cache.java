@@ -13,13 +13,12 @@ public class Cache {
     public Base update(Base model) throws OptimisticException {
         int temp = model.getVersion();
         return store.computeIfPresent(model.getId(), (k, v) -> {
-            if (v.getVersion() == temp) {
-                v.setVersion(temp + 1);
-                return v;
-            } else {
+            if (v.getVersion() != temp) {
                 throw new OptimisticException("overwriting version which has been updated after " +
                         "you started updating process");
             }
+            v.setVersion(temp + 1);
+            return v;
         });
     }
 
