@@ -23,12 +23,6 @@ public class CountBarrier {
         }
     }
 
-    public void increment() {
-        synchronized (monitor) {
-            count++;
-        }
-    }
-
     public void await() {
         synchronized (monitor) {
             try {
@@ -39,9 +33,5 @@ public class CountBarrier {
                 e.printStackTrace();
             }
         }
-    }
-
-    public int getCount() {
-        return count;
     }
 }

@@ -14,23 +14,30 @@ public class CountBarrierTest {
 
         Thread thread1 = new Thread(() -> {
             cb.await();
-            cb.increment();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         });
 
         Thread thread2 = new Thread(() -> {
             cb.await();
-            cb.increment();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         });
 
         thread1.start();
         thread2.start();
         thread0.start();
 
-        thread1.join();
-        thread2.join();
         thread0.join();
 
-        assertEquals(102, cb.getCount());
+        assertEquals(Thread.State.TIMED_WAITING, thread1.getState());
+        assertEquals(Thread.State.TIMED_WAITING, thread2.getState());
     }
 
 }
