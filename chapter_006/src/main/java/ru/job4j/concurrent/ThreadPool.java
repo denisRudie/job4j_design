@@ -24,8 +24,13 @@ public class ThreadPool {
         }
     }
 
-    public List<Thread> getThreads() {
-        return threads;
+    public boolean isTerminated() {
+        for (Thread thread : threads) {
+            if (thread.getState() != Thread.State.TERMINATED) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void work(Runnable job) throws InterruptedException {

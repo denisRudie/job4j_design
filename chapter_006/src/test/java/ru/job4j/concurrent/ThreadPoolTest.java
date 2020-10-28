@@ -44,50 +44,6 @@ public class ThreadPoolTest {
         pool.shutdown();
         Thread.sleep(150);
 
-        boolean isTerminated = true;
-        for (Thread thread : pool.getThreads()) {
-            if (thread.getState() != Thread.State.TERMINATED) {
-                isTerminated = false;
-                break;
-            }
-        }
-        assertTrue(isTerminated);
-    }
-
-    @Test
-    public void whenNoTasksThanThreadSleeps() throws InterruptedException {
-        SimpleBlockingQueue<Runnable> queue = new SimpleBlockingQueue<>(100);
-
-        ThreadPool pool = new ThreadPool(queue);
-        Thread.sleep(100);
-
-        boolean isSleep = true;
-        for (Thread thread : pool.getThreads()) {
-            if (thread.getState() != Thread.State.WAITING) {
-                isSleep = false;
-                break;
-            }
-        }
-        assertTrue(isSleep);
-    }
-
-    @Test
-    public void whenAddBigTaskThenOneThreadFromPoolIsRunnable() throws InterruptedException {
-        SimpleBlockingQueue<Runnable> queue = new SimpleBlockingQueue<>(100);
-        ThreadPool pool = new ThreadPool(queue);
-        pool.work(() -> {
-            double d = 0;
-            for (int i = 0; i < 1_000_000; i++) {
-                d += Math.tan(i) * Math.atan(i);
-            }
-        });
-
-        int runThreads = 0;
-        for (Thread thread : pool.getThreads()) {
-            if (thread.getState() == Thread.State.RUNNABLE) {
-                runThreads++;
-            }
-        }
-        assertEquals(1, runThreads);
+        assertTrue(pool.isTerminated());
     }
 }
