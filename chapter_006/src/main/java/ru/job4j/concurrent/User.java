@@ -1,11 +1,18 @@
 package ru.job4j.concurrent;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public class User {
     private int id;
     private String name;
 
+    public User(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public static User of(String name) {
-        User user = new User();
+        User user = new User(ThreadLocalRandom.current().nextInt(), name);
         user.name = name;
         return user;
     }
