@@ -1,5 +1,6 @@
 package ru.job4j.concurrent.async;
 
+import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -22,9 +23,15 @@ public class RolColSum {
 
     public static Sums[] asyncSum(int[][] matrix) {
         Sums[] sums = new Sums[matrix.length];
+        HashMap<Integer, CompletableFuture<Sums>> map = new HashMap<>();
+
         for (int i = 0; i < matrix.length; i++) {
+            map.put(i, getTask(matrix, i));
+        }
+
+        for (int i = 0; i < map.size(); i++) {
             try {
-                sums[i] = getTask(matrix, i).get();
+                sums[i] = map.get(i).get();
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
