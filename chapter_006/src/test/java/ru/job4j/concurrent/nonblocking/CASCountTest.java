@@ -1,5 +1,6 @@
 package ru.job4j.concurrent.nonblocking;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -8,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 
 public class CASCountTest {
 
+    @Ignore
     @Test
     public void whenTwoThreadsConcurrentlyIncrementValue() throws InterruptedException {
         CASCount casCount = new CASCount();
