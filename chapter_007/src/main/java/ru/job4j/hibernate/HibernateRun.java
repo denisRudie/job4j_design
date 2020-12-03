@@ -7,6 +7,7 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import ru.job4j.tracker.Item;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public class HibernateRun {
@@ -16,18 +17,11 @@ public class HibernateRun {
                 .configure().build();
         try {
             SessionFactory sf = new MetadataSources(registry).buildMetadata().buildSessionFactory();
-            Item item = create(new Item("Learn Hibernate"), sf);
-            System.out.println(item);
-            item.setName("Learn Hibernate 5.");
-            update(item, sf);
-            System.out.println(item);
-            Item rsl = findById(item.getId(), sf);
-            System.out.println(rsl);
-            delete(rsl.getId(), sf);
-            List<Item> list = findAll(sf);
-            for (Item it : list) {
-                System.out.println(it);
-            }
+            Item item = create(new Item(
+                    "Hibernate",
+                    "Smart feature",
+                    new Timestamp(2020, 12, 4, 1, 0, 0, 0)
+                    ), sf);
         }  catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -55,7 +49,7 @@ public class HibernateRun {
     public static void delete(Integer id, SessionFactory sf) {
         Session session = sf.openSession();
         session.beginTransaction();
-        Item item = new Item(null);
+        Item item = new Item();
         item.setId(id);
         session.delete(item);
         session.getTransaction().commit();
