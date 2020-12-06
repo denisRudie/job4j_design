@@ -33,38 +33,29 @@ public class HbmTracker implements Store, AutoCloseable {
 
     @Override
     public boolean replace(String id, Item item) {
-        boolean rsl;
-        Session session = sf.openSession();
-        session.beginTransaction();
-        Item existing = session.get(Item.class, Integer.parseInt(id));
-
-        if (existing != null) {
-            item.setId(existing.getId());
-            session.merge(item);
-            rsl = true;
-        } else {
-            rsl = false;
+        try (Session session = sf.openSession()) {
+            session.beginTransaction();
+            item.setId(Integer.parseInt(id));
+            session.update(item);
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            return false;
         }
-        session.getTransaction().commit();
-        session.close();
-        return rsl;
+        return true;
     }
 
     @Override
     public boolean delete(String id) {
-        boolean rsl;
-        Session session = sf.openSession();
-        session.beginTransaction();
-        Item existing = session.get(Item.class, Integer.parseInt(id));
-        if (existing != null) {
-            session.delete(existing);
-            rsl = true;
-        } else {
-            rsl = false;
+        try (Session session = sf.openSession()) {
+            session.beginTransaction();
+            Item item = new Item();
+            item.setId(Integer.parseInt(id));
+            session.delete(item);
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            return false;
         }
-        session.getTransaction().commit();
-        session.close();
-        return rsl;
+        return true;
     }
 
     @Override
@@ -104,10 +95,12 @@ public class HbmTracker implements Store, AutoCloseable {
 //        hbmTracker.findAll().forEach(System.out::println);
         Item item = new Item();
         item.setName("Test123");
+        System.out.println(hbmTracker.replace("150", item));
+//        System.out.println(hbmTracker.delete("116"));
 //        hbmTracker.add(item);
 //        hbmTracker.replace("118", item);
 //        hbmTracker.delete("118");
 //        hbmTracker.findByName("Hibernate").forEach(System.out::println);
-        System.out.println(hbmTracker.findById("115"));
+//        System.out.println(hbmTracker.findById("115"));
     }
 }
