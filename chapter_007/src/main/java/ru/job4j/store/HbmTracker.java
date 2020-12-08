@@ -6,11 +6,14 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.query.Query;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.job4j.tracker.Item;
 
 import java.util.List;
 
 public class HbmTracker implements Store, AutoCloseable {
+    private static final Logger LOG = LoggerFactory.getLogger(HbmTracker.class);
     private final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
             .configure().build();
     private final SessionFactory sf = new MetadataSources(registry)
@@ -38,10 +41,11 @@ public class HbmTracker implements Store, AutoCloseable {
             item.setId(Integer.parseInt(id));
             session.update(item);
             session.getTransaction().commit();
+            return true;
         } catch (Exception e) {
-            return false;
+            LOG.warn(e.getMessage(), e);
         }
-        return true;
+        return false;
     }
 
     @Override
@@ -52,10 +56,11 @@ public class HbmTracker implements Store, AutoCloseable {
             item.setId(Integer.parseInt(id));
             session.delete(item);
             session.getTransaction().commit();
+            return true;
         } catch (Exception e) {
-            return false;
+            LOG.warn(e.getMessage(), e);
         }
-        return true;
+        return false;
     }
 
     @Override
