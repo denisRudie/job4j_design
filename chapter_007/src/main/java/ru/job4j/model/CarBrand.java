@@ -13,7 +13,7 @@ public class CarBrand {
     private int id;
     @Column(unique = true)
     private String name;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CarModel> models = new ArrayList<>();
 
     public int getId() {
@@ -34,6 +34,10 @@ public class CarBrand {
 
     public void addModel(CarModel model) {
         this.models.add(model);
+    }
+
+    public List<CarModel> getModels() {
+        return this.models;
     }
 
     @Override

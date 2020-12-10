@@ -8,13 +8,16 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import ru.job4j.model.CarBrand;
 import ru.job4j.model.CarModel;
 
+import java.util.List;
+
 public class HbmRun {
-    public static void main(String[] args) {
-        final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
-                .configure().build();
-        final SessionFactory sf = new MetadataSources(registry)
-                .buildMetadata()
-                .buildSessionFactory();
+    private final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
+            .configure().build();
+    private final SessionFactory sf = new MetadataSources(registry)
+            .buildMetadata()
+            .buildSessionFactory();
+
+    public void addData() {
         try (Session session = sf.openSession()) {
             session.beginTransaction();
 
@@ -24,17 +27,35 @@ public class HbmRun {
             for (int i = 1; i <= 5; i++) {
                 CarModel model = new CarModel();
                 model.setName("model" + i);
-                int modelId = (Integer) session.save(model);
-                brand.addModel(session.get(CarModel.class, modelId));
+                brand.addModel(model);
+                model.setBrand(brand);
             }
-
             session.save(brand);
-
             session.getTransaction().commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            StandardServiceRegistryBuilder.destroy(registry);
+        }
+    }
+
+    public List<CarBrand> getData() {
+        List<CarBrand> brands;
+        try (Session session = sf.openSession()) {
+            session.beginTransaction();
+            brands = session.createQuery(
+                    "select distinct cb from CarBrand cb join fetch cb.models")
+                    .list();
+            session.getTransaction().commit();
+        }
+        return brands;
+    }
+
+    public static void main(String[] args) {
+        HbmRun hbmRun = new HbmRun();
+        hbmRun.addData();
+        List<CarBrand> brands = hbmRun.getData();
+
+        for (CarBrand carBrand : brands) {
+            for (CarModel model : carBrand.getModels()) {
+                System.out.println(model.getName());
+            }
         }
     }
 }
