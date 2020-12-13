@@ -1,7 +1,9 @@
 package ru.job4j.model;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -11,23 +13,32 @@ public class Car {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String model;
-    private Timestamp created;
-    private String owner;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<Driver> drivers = new ArrayList<>();
+    @OneToOne
+    @JoinColumn(name = "engine_id")
+    private Engine engine;
 
-    public static Car of(String model, Timestamp created, String owner) {
-        Car car = new Car();
-        car.model = model;
-        car.created = created;
-        car.owner = owner;
-        return car;
+    public Car() {
+        this.created = new Date();
     }
 
-    public String getOwner() {
-        return owner;
+    public List<Driver> getDrivers() {
+        return drivers;
     }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
+    public void addDriver(Driver driver) {
+        this.drivers.add(driver);
+    }
+
+    public Engine getEngine() {
+        return engine;
+    }
+
+    public void setEngine(Engine engine) {
+        this.engine = engine;
     }
 
     public int getId() {
@@ -46,11 +57,11 @@ public class Car {
         this.model = model;
     }
 
-    public Timestamp getCreated() {
+    public Date getCreated() {
         return created;
     }
 
-    public void setCreated(Timestamp created) {
+    public void setCreated(Date created) {
         this.created = created;
     }
 
