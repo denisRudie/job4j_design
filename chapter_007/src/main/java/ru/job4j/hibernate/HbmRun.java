@@ -5,57 +5,91 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import ru.job4j.model.CarBrand;
-import ru.job4j.model.CarModel;
+import ru.job4j.model.Candidate;
 
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class HbmRun {
+    private final static HbmRun INST = new HbmRun();
     private final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
             .configure().build();
     private final SessionFactory sf = new MetadataSources(registry)
-            .buildMetadata()
-            .buildSessionFactory();
+            .buildMetadata().buildSessionFactory();
 
-    public void addData() {
-        try (Session session = sf.openSession()) {
-            session.beginTransaction();
+    private HbmRun() {
 
-            CarBrand brand = new CarBrand();
-            brand.setName("Toyota");
-
-            for (int i = 1; i <= 5; i++) {
-                CarModel model = new CarModel();
-                model.setName("model" + i);
-                brand.addModel(model);
-                model.setBrand(brand);
-            }
-            session.save(brand);
-            session.getTransaction().commit();
-        }
     }
 
-    public List<CarBrand> getData() {
-        List<CarBrand> brands;
+    public static HbmRun instOf() {
+        return INST;
+    }
+
+    private <T> T tx(final Function<Session, T> command) {
+        T rsl;
         try (Session session = sf.openSession()) {
             session.beginTransaction();
-            brands = session.createQuery(
-                    "select distinct cb from CarBrand cb join fetch cb.models")
-                    .list();
+            rsl = command.apply(session);
             session.getTransaction().commit();
         }
-        return brands;
+        return rsl;
+    }
+
+    private void consume(final Consumer<Session> command) {
+        try (Session session = sf.openSession()) {
+            session.beginTransaction();
+            command.accept(session);
+            session.getTransaction().commit();
+        }
     }
 
     public static void main(String[] args) {
-        HbmRun hbmRun = new HbmRun();
-        hbmRun.addData();
-        List<CarBrand> brands = hbmRun.getData();
+        HbmRun store = HbmRun.instOf();
 
-        for (CarBrand carBrand : brands) {
-            for (CarModel model : carBrand.getModels()) {
-                System.out.println(model.getName());
-            }
+        Candidate cand1 = Candidate.of("Mike", 10, 10_000.00f);
+        Candidate cand2 = Candidate.of("Tom", 2, 6_000.00f);
+        Candidate cand3 = Candidate.of("Jack", 25, 13_000.00f);
+
+//save candidates
+//        store.consume(session -> session.save(cand1));
+//        store.consume(session -> session.save(cand2));
+//        store.consume(session -> session.save(cand3));
+//get all candidates
+        List<Candidate> candidates = store.tx(
+                session -> session.createQuery("from Candidate ").list()
+        );
+        System.out.println("all candidates: " + candidates);
+//get candidate by id
+        Candidate candById = store.tx(session -> session.get(Candidate.class, 1));
+        System.out.println("candidate by id: " + candById);
+//get candidates by name
+        List<Candidate> candidatesByName = store.tx(
+                session -> session.createQuery("from Candidate where name = :name")
+                        .setParameter("name", "Tom")
+                        .list()
+        );
+        for (Candidate candidate : candidatesByName) {
+            System.out.println("candidate by name: " + candidate);
         }
+//update candidate
+        store.consume(session -> session.createQuery(
+                "update Candidate set name = :name where id =:id")
+                .setParameter("name", "John")
+                .setParameter("id", 1)
+                .executeUpdate()
+        );
+        Candidate updateCand = store.tx(session -> session.get(Candidate.class, 1));
+        System.out.println("Updated cand: " + updateCand);
+//delete candidate by id
+        store.consume(session -> session.createQuery(
+                "delete from Candidate where id = :id")
+                .setParameter("id", 3)
+                .executeUpdate()
+        );
+        List<Candidate> candidatesAfterDelete = store.tx(
+                session -> session.createQuery("from Candidate ").list()
+        );
+        System.out.println("Candidates after delete: " + candidatesAfterDelete.size());
     }
 }
