@@ -47,49 +47,37 @@ public class HbmRun {
     public static void main(String[] args) {
         HbmRun store = HbmRun.instOf();
 
-        Candidate cand1 = Candidate.of("Mike", 10, 10_000.00f);
-        Candidate cand2 = Candidate.of("Tom", 2, 6_000.00f);
-        Candidate cand3 = Candidate.of("Jack", 25, 13_000.00f);
+//        Candidate cand1 = Candidate.of("Mike", 10, 10_000.00f);
+//        Candidate cand2 = Candidate.of("Tom", 2, 6_000.00f);
+//        Candidate cand3 = Candidate.of("Jack", 25, 13_000.00f);
 
 //save candidates
 //        store.consume(session -> session.save(cand1));
 //        store.consume(session -> session.save(cand2));
 //        store.consume(session -> session.save(cand3));
-//get all candidates
-        List<Candidate> candidates = store.tx(
-                session -> session.createQuery("from Candidate ").list()
-        );
-        System.out.println("all candidates: " + candidates);
-//get candidate by id
-        Candidate candById = store.tx(session -> session.get(Candidate.class, 1));
-        System.out.println("candidate by id: " + candById);
-//get candidates by name
-        List<Candidate> candidatesByName = store.tx(
-                session -> session.createQuery("from Candidate where name = :name")
-                        .setParameter("name", "Tom")
+//create vacancies and add them to vacansy bank
+//        Vacancy vac1 = Vacancy.of("driver");
+//        Vacancy vac2 = Vacancy.of("pilot");
+//        Vacancy vac3 = Vacancy.of("JAVA developer");
+//
+//        VacancyBank vacancyBank = VacancyBank.of("HH");
+//        vacancyBank.addVacancy(vac1);
+//        vacancyBank.addVacancy(vac2);
+//        vacancyBank.addVacancy(vac3);
+//
+//        store.consume(session -> session.save(vacancyBank));
+
+//        VacancyBank bank = store.tx(session -> session.get(VacancyBank.class, 1));
+//        Candidate cand1fromDb = store.tx(session -> session.get(Candidate.class, 1));
+//        cand1fromDb.setVacancyBank(bank);
+//        store.consume(session -> session.update(cand1fromDb));
+
+        List<Candidate> candidates = store.tx(session ->
+                session.createQuery("select distinct c from Candidate c " +
+                        "join fetch c.vacancyBank b " +
+                        "join fetch b.vacancies")
                         .list()
         );
-        for (Candidate candidate : candidatesByName) {
-            System.out.println("candidate by name: " + candidate);
-        }
-//update candidate
-        store.consume(session -> session.createQuery(
-                "update Candidate set name = :name where id =:id")
-                .setParameter("name", "John")
-                .setParameter("id", 1)
-                .executeUpdate()
-        );
-        Candidate updateCand = store.tx(session -> session.get(Candidate.class, 1));
-        System.out.println("Updated cand: " + updateCand);
-//delete candidate by id
-        store.consume(session -> session.createQuery(
-                "delete from Candidate where id = :id")
-                .setParameter("id", 3)
-                .executeUpdate()
-        );
-        List<Candidate> candidatesAfterDelete = store.tx(
-                session -> session.createQuery("from Candidate ").list()
-        );
-        System.out.println("Candidates after delete: " + candidatesAfterDelete.size());
+        System.out.println(candidates);
     }
 }

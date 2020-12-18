@@ -11,12 +11,15 @@ public class Candidate {
     private String name;
     private int experience;
     private float salary;
+    @OneToOne(fetch = FetchType.LAZY)
+    private VacancyBank vacancyBank;
 
-    public static Candidate of(String name, int experience, float salary) {
+    public static Candidate of(String name, int experience, float salary, VacancyBank bank) {
         Candidate cand = new Candidate();
         cand.name = name;
         cand.experience = experience;
         cand.salary = salary;
+        cand.vacancyBank = bank;
         return cand;
     }
 
@@ -52,6 +55,14 @@ public class Candidate {
         this.salary = salary;
     }
 
+    public VacancyBank getVacancyBank() {
+        return vacancyBank;
+    }
+
+    public void setVacancyBank(VacancyBank vacancyBank) {
+        this.vacancyBank = vacancyBank;
+    }
+
     @Override
     public String toString() {
         return "Candidate{" +
@@ -59,6 +70,7 @@ public class Candidate {
                 ", name='" + name + '\'' +
                 ", experience=" + experience +
                 ", salary=" + salary +
+                ", vacancyBank=" + vacancyBank +
                 '}';
     }
 }
