@@ -25,5 +25,6 @@
         <mapping class="ru.job4j.model.Candidate" />
         <mapping class="ru.job4j.model.VacancyBank" />
         <mapping class="ru.job4j.model.Vacancy" />
+        <mapping class="ru.job4j.model.Order" />
     </session-factory>
 </hibernate-configuration>
